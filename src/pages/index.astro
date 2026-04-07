@@ -1,0 +1,30 @@
+---
+import Layout from '../layouts/Layout.astro';
+import CryptoDashboardWrapper from '../components/CryptoDashboardWrapper';
+import '../styles/global.css';
+---
+
+<Layout title="Webflow Cloud Test App">
+  <div class="flex flex-col min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
+    <header class="pt-10 pb-6 text-center">
+      <p class="text-xs font-medium uppercase tracking-widest text-indigo-600 dark:text-indigo-400 mb-2">
+        Webflow Cloud Test App
+      </p>
+      <h1 class="text-4xl font-bold text-gray-900 dark:text-white">
+        Crypto Dashboard
+      </h1>
+      <p class="mt-2 text-gray-600 dark:text-gray-300">
+        Live market data from CoinGecko
+      </p>
+    </header>
+    <main class="flex-1 px-4 pb-12">
+      <CryptoDashboardWrapper client:load />
+    </main>
+    <footer class="border-t border-gray-200 dark:border-gray-700 bg-white/60 dark:bg-gray-900/60 backdrop-blur">
+      <div class="max-w-6xl mx-auto px-4 py-6 flex flex-col sm:flex-row items-center justify-between gap-2 text-sm text-gray-500 dark:text-gray-400">
+        <p>Webflow Cloud Test App — for internal testing purposes only</p>
+        <p>Astro + React Islands + React Query + Tailwind CSS</p>
+      </div>
+    </footer>
+  </div>
+</Layout>
