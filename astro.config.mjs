@@ -1,12 +1,19 @@
 import { defineConfig } from 'astro/config';
 import react from '@astrojs/react';
 import tailwind from '@astrojs/tailwind';
+import cloudflare from '@astrojs/cloudflare';
 
 // User's custom Astro configuration
 export default defineConfig({
   integrations: [react(), tailwind()],
   site: 'https://example.com',
   compressHTML: true,
+  output: 'server',
+  adapter: cloudflare({
+    platformProxy: {
+      enabled: true,
+    },
+  }),
   build: {
     inlineStylesheets: 'auto',
   },

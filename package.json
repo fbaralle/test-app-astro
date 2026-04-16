@@ -5,10 +5,13 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
-    "preview": "astro preview",
-    "astro": "astro"
+    "preview": "wrangler pages dev ./dist",
+    "astro": "astro",
+    "db:setup": "wrangler d1 migrations apply DB --local",
+    "cf:types": "wrangler types"
   },
   "dependencies": {
+    "@astrojs/cloudflare": "^12.3.0",
     "@astrojs/react": "^4.2.1",
     "@astrojs/tailwind": "^6.0.2",
     "@tanstack/react-query": "^5.95.2",
@@ -18,8 +21,10 @@
     "tailwindcss": "^3.4.17"
   },
   "devDependencies": {
+    "@cloudflare/workers-types": "^4.20260416.2",
     "@types/react": "^19.1.6",
     "@types/react-dom": "^19.1.5",
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "wrangler": "^4.83.0"
   }
 }
