@@ -1,6 +1,7 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useState } from "react";
 import CryptoDashboard from "./CryptoDashboard";
+import FavoritesSection from "./FavoritesSection";
 
 export default function CryptoDashboardWrapper() {
   const [client] = useState(
@@ -17,6 +18,7 @@ export default function CryptoDashboardWrapper() {
 
   return (
     <QueryClientProvider client={client}>
+      <FavoritesSection />
       <CryptoDashboard />
     </QueryClientProvider>
   );

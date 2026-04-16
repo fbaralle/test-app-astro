@@ -7,6 +7,7 @@ import cloudflare from '@astrojs/cloudflare';
 export default defineConfig({
   integrations: [react(), tailwind()],
   site: 'https://example.com',
+  base: process.env.COSMIC_MOUNT_PATH || process.env.PUBLIC_BASE_PATH || '',
   compressHTML: true,
   output: 'server',
   adapter: cloudflare({

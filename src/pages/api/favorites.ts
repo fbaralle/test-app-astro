@@ -4,15 +4,19 @@ interface Favorite {
   id: number;
   user_id: string;
   coin_id: string;
+  coin_name: string | null;
+  coin_symbol: string | null;
+  coin_image: string | null;
   created_at: number;
 }
 
 export const GET: APIRoute = async ({ locals, url }) => {
-  const { env } = locals.runtime;
-  const userId = url.searchParams.get("user_id") || "anonymous";
+  const env = locals.runtime.env as unknown as Record<string, unknown>;
+  const db = env.DB as { prepare: (sql: string) => { bind: (...args: unknown[]) => { all: <T>() => Promise<{ results: T[] }> } } };
+  const userId = url.searchParams.get("user_id") || "public";
 
   try {
-    const { results } = await env.DB.prepare(
+    const { results } = await db.prepare(
       "SELECT * FROM favorites WHERE user_id = ? ORDER BY created_at DESC"
     )
       .bind(userId)
@@ -30,11 +34,18 @@ export const GET: APIRoute = async ({ locals, url }) => {
 };
 
 export const POST: APIRoute = async ({ locals, request }) => {
-  const { env } = locals.runtime;
+  const env = locals.runtime.env as unknown as Record<string, unknown>;
+  const db = env.DB as { prepare: (sql: string) => { bind: (...args: unknown[]) => { run: () => Promise<void> } } };
 
   try {
-    const body = (await request.json()) as { user_id?: string; coin_id?: string };
-    const { user_id = "anonymous", coin_id } = body;
+    const body = (await request.json()) as {
+      user_id?: string;
+      coin_id?: string;
+      coin_name?: string;
+      coin_symbol?: string;
+      coin_image?: string;
+    };
+    const { user_id = "public", coin_id, coin_name, coin_symbol, coin_image } = body;
 
     if (!coin_id) {
       return new Response(JSON.stringify({ error: "coin_id is required" }), {
@@ -43,10 +54,10 @@ export const POST: APIRoute = async ({ locals, request }) => {
       });
     }
 
-    await env.DB.prepare(
-      "INSERT OR IGNORE INTO favorites (user_id, coin_id, created_at) VALUES (?, ?, ?)"
+    await db.prepare(
+      "INSERT OR IGNORE INTO favorites (user_id, coin_id, coin_name, coin_symbol, coin_image, created_at) VALUES (?, ?, ?, ?, ?, ?)"
     )
-      .bind(user_id, coin_id, Date.now())
+      .bind(user_id, coin_id, coin_name || null, coin_symbol || null, coin_image || null, Date.now())
       .run();
 
     return new Response(JSON.stringify({ success: true, coin_id }), {
@@ -61,8 +72,9 @@ export const POST: APIRoute = async ({ locals, request }) => {
 };
 
 export const DELETE: APIRoute = async ({ locals, url }) => {
-  const { env } = locals.runtime;
-  const userId = url.searchParams.get("user_id") || "anonymous";
+  const env = locals.runtime.env as unknown as Record<string, unknown>;
+  const db = env.DB as { prepare: (sql: string) => { bind: (...args: unknown[]) => { run: () => Promise<void> } } };
+  const userId = url.searchParams.get("user_id") || "public";
   const coinId = url.searchParams.get("coin_id");
 
   if (!coinId) {
@@ -73,7 +85,7 @@ export const DELETE: APIRoute = async ({ locals, url }) => {
   }
 
   try {
-    await env.DB.prepare(
+    await db.prepare(
       "DELETE FROM favorites WHERE user_id = ? AND coin_id = ?"
     )
       .bind(userId, coinId)
