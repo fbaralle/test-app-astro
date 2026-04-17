@@ -223,7 +223,7 @@ export default function HealthcheckToolbar() {
     async function fetchHealth() {
       try {
         const basePath = getBasePath();
-        const res = await fetch(`${basePath}/api/healthcheck`);
+        const res = await fetch(`${basePath}/api/binding-status`);
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = (await res.json()) as HealthcheckResponse;
         setHealth(data);
