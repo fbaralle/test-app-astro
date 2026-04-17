@@ -18,7 +18,7 @@ interface ExportResult {
   url: string;
 }
 
-const getBasePath = () => import.meta.env.PUBLIC_BASE_PATH || '';
+const getBasePath = () => import.meta.env.PUBLIC_API_MOUNT_PATH || '';
 
 async function fetchExports(): Promise<Export[]> {
   const basePath = getBasePath();
@@ -182,7 +182,7 @@ export default function ExportsSection({ compact }: Props) {
                 </p>
               </div>
               <a
-                href={`/api/export?id=${exp.key.replace("exports/", "")}`}
+                href={`${getBasePath()}/api/export?id=${exp.key.replace("exports/", "")}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="ml-3 px-2 py-1 text-xs font-medium text-indigo-600 dark:text-indigo-400 hover:underline"

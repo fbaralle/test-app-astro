@@ -19,6 +19,8 @@ interface HealthcheckResponse {
 
 type ServiceName = "d1" | "kv_sessions" | "kv_flags" | "r2";
 
+const getBasePath = () => import.meta.env.PUBLIC_API_MOUNT_PATH || '';
+
 interface ServiceConfig {
   label: string;
   type: string;
@@ -220,7 +222,8 @@ export default function HealthcheckToolbar() {
   useEffect(() => {
     async function fetchHealth() {
       try {
-        const res = await fetch("/api/healthcheck");
+        const basePath = getBasePath();
+        const res = await fetch(`${basePath}/api/healthcheck`);
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = (await res.json()) as HealthcheckResponse;
         setHealth(data);
