@@ -19,7 +19,7 @@ interface HealthcheckResponse {
 
 type ServiceName = "d1" | "kv_sessions" | "kv_flags" | "r2";
 
-const getBasePath = () => import.meta.env.PUBLIC_API_MOUNT_PATH || '';
+const getBasePath = () => import.meta.env.APP_PUBLIC_API_PATH || "";
 
 interface ServiceConfig {
   label: string;
