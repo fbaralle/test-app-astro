@@ -11,11 +11,18 @@ interface Favorite {
 }
 
 export const GET: APIRoute = async ({ locals, url }) => {
-  const env = locals.runtime.env as unknown as Record<string, unknown>;
-  const db = env.DB as { prepare: (sql: string) => { bind: (...args: unknown[]) => { all: <T>() => Promise<{ results: T[] }> } } };
-  const userId = url.searchParams.get("user_id") || "public";
-
   try {
+    const env = locals.runtime?.env as unknown as Record<string, unknown> | undefined;
+    const db = env?.DB as { prepare: (sql: string) => { bind: (...args: unknown[]) => { all: <T>() => Promise<{ results: T[] }> } } } | undefined;
+    const userId = url.searchParams.get("user_id") || "public";
+
+    if (!db) {
+      return new Response(
+        JSON.stringify({ error: "DB binding not available", favorites: [] }),
+        { status: 503, headers: { "Content-Type": "application/json" } }
+      );
+    }
+
     const { results } = await db.prepare(
       "SELECT * FROM favorites WHERE user_id = ? ORDER BY created_at DESC"
     )
@@ -34,10 +41,17 @@ export const GET: APIRoute = async ({ locals, url }) => {
 };
 
 export const POST: APIRoute = async ({ locals, request }) => {
-  const env = locals.runtime.env as unknown as Record<string, unknown>;
-  const db = env.DB as { prepare: (sql: string) => { bind: (...args: unknown[]) => { run: () => Promise<void> } } };
-
   try {
+    const env = locals.runtime?.env as unknown as Record<string, unknown> | undefined;
+    const db = env?.DB as { prepare: (sql: string) => { bind: (...args: unknown[]) => { run: () => Promise<void> } } } | undefined;
+
+    if (!db) {
+      return new Response(
+        JSON.stringify({ error: "DB binding not available" }),
+        { status: 503, headers: { "Content-Type": "application/json" } }
+      );
+    }
+
     const body = (await request.json()) as {
       user_id?: string;
       coin_id?: string;
@@ -72,19 +86,26 @@ export const POST: APIRoute = async ({ locals, request }) => {
 };
 
 export const DELETE: APIRoute = async ({ locals, url }) => {
-  const env = locals.runtime.env as unknown as Record<string, unknown>;
-  const db = env.DB as { prepare: (sql: string) => { bind: (...args: unknown[]) => { run: () => Promise<void> } } };
-  const userId = url.searchParams.get("user_id") || "public";
-  const coinId = url.searchParams.get("coin_id");
-
-  if (!coinId) {
-    return new Response(JSON.stringify({ error: "coin_id is required" }), {
-      status: 400,
-      headers: { "Content-Type": "application/json" },
-    });
-  }
-
   try {
+    const env = locals.runtime?.env as unknown as Record<string, unknown> | undefined;
+    const db = env?.DB as { prepare: (sql: string) => { bind: (...args: unknown[]) => { run: () => Promise<void> } } } | undefined;
+    const userId = url.searchParams.get("user_id") || "public";
+    const coinId = url.searchParams.get("coin_id");
+
+    if (!db) {
+      return new Response(
+        JSON.stringify({ error: "DB binding not available" }),
+        { status: 503, headers: { "Content-Type": "application/json" } }
+      );
+    }
+
+    if (!coinId) {
+      return new Response(JSON.stringify({ error: "coin_id is required" }), {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
     await db.prepare(
       "DELETE FROM favorites WHERE user_id = ? AND coin_id = ?"
     )

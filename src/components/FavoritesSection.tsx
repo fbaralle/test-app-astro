@@ -58,6 +58,7 @@ export function useFavorites() {
   return useQuery({
     queryKey: ["favorites"],
     queryFn: fetchFavorites,
+    retry: false,
   });
 }
 
@@ -65,6 +66,7 @@ export function useAddFavorite() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: addFavorite,
+    retry: false,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["favorites"] });
     },
@@ -75,6 +77,7 @@ export function useRemoveFavorite() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: removeFavorite,
+    retry: false,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["favorites"] });
     },
