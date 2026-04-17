@@ -19,7 +19,7 @@ interface TrackResponse {
 
 const VISITOR_ID_KEY = "crypto_dashboard_visitor_id";
 
-const getBasePath = () => import.meta.env.PUBLIC_APP_API_PATH || "";
+const getBasePath = () => (import.meta.env.BASE_URL || "").replace(/\/$/, "");
 
 function getVisitorId(): string | null {
   if (typeof window === "undefined") return null;

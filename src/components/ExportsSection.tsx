@@ -18,7 +18,7 @@ interface ExportResult {
   url: string;
 }
 
-const getBasePath = () => import.meta.env.PUBLIC_APP_API_PATH || "";
+const getBasePath = () => (import.meta.env.BASE_URL || "").replace(/\/$/, "");
 
 async function fetchExports(): Promise<Export[]> {
   const basePath = getBasePath();

@@ -14,7 +14,7 @@ interface FavoritesResponse {
   favorites: Favorite[];
 }
 
-const getBasePath = () => import.meta.env.PUBLIC_APP_API_PATH || "";
+const getBasePath = () => (import.meta.env.BASE_URL || "").replace(/\/$/, "");
 
 async function fetchFavorites(): Promise<Favorite[]> {
   const basePath = getBasePath();
